@@ -1,89 +1,36 @@
 function knightMoves(start, end) {
-	const board = [
-		[
-			[7, 0],
-			[7, 1],
-			[7, 2],
-			[7, 3],
-			[7, 4],
-			[7, 5],
-			[7, 6],
-			[7, 7],
-		], // Top row (White's side)
-		[
-			[6, 0],
-			[6, 1],
-			[6, 2],
-			[6, 3],
-			[6, 4],
-			[6, 5],
-			[6, 6],
-			[6, 7],
-		],
-		[
-			[5, 0],
-			[5, 1],
-			[5, 2],
-			[5, 3],
-			[5, 4],
-			[5, 5],
-			[5, 6],
-			[5, 7],
-		],
-		[
-			[4, 0],
-			[4, 1],
-			[4, 2],
-			[4, 3],
-			[4, 4],
-			[4, 5],
-			[4, 6],
-			[4, 7],
-		],
-		[
-			[3, 0],
-			[3, 1],
-			[3, 2],
-			[3, 3],
-			[3, 4],
-			[3, 5],
-			[3, 6],
-			[3, 7],
-		],
-		[
-			[2, 0],
-			[2, 1],
-			[2, 2],
-			[2, 3],
-			[2, 4],
-			[2, 5],
-			[2, 6],
-			[2, 7],
-		],
-		[
-			[1, 0],
-			[1, 1],
-			[1, 2],
-			[1, 3],
-			[1, 4],
-			[1, 5],
-			[1, 6],
-			[1, 7],
-		],
-		[
-			[0, 0],
-			[0, 1],
-			[0, 2],
-			[0, 3],
-			[0, 4],
-			[0, 5],
-			[0, 6],
-			[0, 7],
-		], // Bottom row (Black's side / a1)
-	];
-
 	const queue = [];
-	queue.push(start);
+	const visited = new Set();
+	visited.add(start.toString());
+	queue.push({
+		position: start,
+		path: [start],
+	});
+
+	while (queue.length !== 0) {
+		const current = queue.shift();
+		if (current.position[0] === end[0] && current.position[1] === end[1]) {
+			console.log(
+				`=> You made it in ${current.path.length - 1} moves! Here's your path: `,
+			);
+			for (const curr of current.path) {
+				console.log(curr);
+			}
+
+			return current.path;
+		}
+		const neighbors = getValidMoves(current.position);
+		for (const neighbor of neighbors) {
+			const neighborStr = neighbor.toString();
+			if (!visited.has(neighborStr)) {
+				visited.add(neighborStr);
+				queue.push({
+					position: neighbor,
+					path: [...current.path, neighbor],
+				});
+			}
+		}
+	}
 }
 
 function getValidMoves([x, y]) {
@@ -109,3 +56,7 @@ function getValidMoves([x, y]) {
 
 	return validMoves;
 }
+
+knightMoves([0, 0], [1, 2]); // Should be 1 move
+knightMoves([0, 0], [3, 3]); // Should be 2 moves
+knightMoves([3, 3], [4, 3]); // Should be 3 moves
